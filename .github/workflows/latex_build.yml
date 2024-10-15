@@ -1,0 +1,60 @@
+name: "LaTeX build"
+
+env:
+  filename: demd-2024-dtc-report-bochet.pdf
+  release_name: latest
+  tag_name: latest
+
+on:
+  push:
+    branches:
+      - 'main'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: "Build Latex to pdf"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compile LaTeX document
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+          working_directory: ./report
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: document
+          path: ./report/main.pdf
+
+  publish:
+    name: "Create release on GitHub"
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: document
+          path: ./
+
+      - run: mv main.pdf ${{ env.filename }}
+
+      - run: gh release delete --yes --cleanup-tag ${{ env.release_name }}
+        continue-on-error: true
+
+      - name: Create release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.tag_name }}
+          name: ${{ env.release_name }}
+          files: "*.pdf"
+          make_latest: true
