@@ -13,7 +13,7 @@ In the project I provide an implementation of **Direct Torque Control**.
 
 ## Report PDF
 
-You can find the report PDF synced with the repository in the release called [**latest**](releases/tag/latest) or directly [here](releases/download/latest/demd-2024-dtc-report-bochet.pdf).
+You can find the report PDF synced with the repository in the release called **latest**.
 
 ## License 
 
